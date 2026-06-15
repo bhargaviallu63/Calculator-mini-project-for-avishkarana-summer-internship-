@@ -1,64 +1,75 @@
 let display = document.getElementById("display");
 let history = document.getElementById("history");
+function balanceBrackets(expr){
+let open = (expr.match(//g) || []).length;
 
+while(open > close){
+expr += ")";
+close++;
+}
+return expr;
+}
 function append(val){
-  let last = display.value.slice(-1);
+let last = display.value.slice(-1);
 
-  if("+-*/".includes(val) && "+-*/".includes(last)){
-    return;
-  }
+if("+-/".includes(val) && "+-/".includes(last)){
+return;
+}
 
-  display.value += val;
+display.value += val;
 }
 
 function clearAll(){
-  display.value = "";
+display.value = "";
 }
 
 function backspace(){
-  display.value = display.value.slice(0,-1);
+display.value = display.value.slice(0,-1);
 }
 
-// SAFE EVALUATION ENGINE
+// SAFE EVALUATION ENGINEERING
 function safeEval(expr){
-  try{
-    expr = expr.replace(/PI/g, "Math.PI");
-    expr = expr.replace(/log10\(/g, "Math.log10(");
-    expr = expr.replace(/log\(/g, "Math.log(");
+try{
+expr = expr.replace(/PI/g, "Math.PI");
+expr = expr.replace(/log10(/g, "Math.log10(");
+expr = expr.replace(/log(/g, "Math.log(");
 
-    // DEGREE conversion for trig
-    expr = expr.replace(/sin\(/g, "Math.sin((Math.PI/180)*");
-    expr = expr.replace(/cos\(/g, "Math.cos((Math.PI/180)*");
-    expr = expr.replace(/tan\(/g, "Math.tan((Math.PI/180)*");
+// DEGREE conversion for trig  
+expr = expr.replace(/sin\(/g, "Math.sin((Math.PI/180)*");  
+expr = expr.replace(/cos\(/g, "Math.cos((Math.PI/180)*");  
+expr = expr.replace(/tan\(/g, "Math.tan((Math.PI/180)*");  
 
-    expr = expr.replace(/sqrt\(/g, "Math.sqrt(");
+expr = expr.replace(/sqrt\(/g, "Math.sqrt(");  
 
-    let result = Function("Math", "return " + expr)(Math);
+let result = Function("Math", "return " + expr)(Math);  
 
-    if(!isFinite(result)) return "Error";
+if(!isFinite(result)) return "Error";  
 
-    return Math.round(result * 100000) / 100000;
+return Math.round(result * 100000) / 100000;
 
-  }catch{
-    return "Error";
-  }
+}catch{
+return "Error";
+}
 }
 
 function calculate(){
-  if(display.value.trim() === "") return;
+if(display.value.trim() === "") return;
 
-  let expr = display.value;
-  let result = safeEval(expr);
+let expr = display.value;
+let result = safeEval(expr);
+if(result === "Error")
+{
+display.value = "Invalid Expression";
+return;
+}
 
-  let item = document.createElement("div");
-  item.style.margin = "6px 0";
+let item = document.createElement("div");
+item.style.margin = "6px 0";
 
-  item.innerHTML = `
-    <span>${expr} = ${result}</span>
-  `;
+item.innerHTML =   <span style="color:#aaa">${expr}</span> = <b>${result}</b>  ;
 
-  history.appendChild(item);
-  history.scrollTop = history.scrollHeight;
+history.appendChild(item);
+history.scrollTop = history.scrollHeight;
 
-  display.value = result;
+display.value = result;
 }
